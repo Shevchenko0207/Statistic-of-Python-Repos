@@ -9,7 +9,7 @@ jobs:
   update-chart:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write # Цей дозвіл необхідний для фіксації (commit) змін
 
     steps:
       - name: Checkout repository
@@ -25,9 +25,12 @@ jobs:
           pip install requests pygal
 
       - name: Run script to generate chart
+        # Змінено: Додано змінну середовища GITHUB_TOKEN для автентифікації API
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python scripts/python_repos.py
-
+          
       - name: Commit and push updated chart
         run: |
           git config user.name "github-actions[bot]"
@@ -39,3 +42,4 @@ jobs:
           else
             echo "No changes to commit"
           fi
+
