@@ -21,7 +21,8 @@
             padding: 20px;
         }
         /* Стиль для SVG, щоб забезпечити адаптивність */
-        #chart-container svg {
+        #chart-container svg,
+        #chart-container object { /* Додано object для сумісності */
             display: block;
             width: 100%;
             height: auto;
@@ -47,10 +48,13 @@
         </header>
 
         <main class="flex justify-center">
-            <!-- Тут буде вбудована SVG-діаграма -->
+            <!-- Змінено: Використовуємо тег <object> для вбудовування SVG. -->
+            <!-- Це найбільш надійний спосіб вбудувати SVG із зовнішнього файлу. -->
             <div id="chart-container" class="w-full h-auto max-w-full rounded-lg shadow-xl">
-                <!-- Підказка, якщо SVG ще не завантажено -->
-                <p class="text-center text-gray-500 p-10">Loading chart...</p>
+                <object type="image/svg+xml" data="python_repos.svg" class="w-full h-auto">
+                    <!-- Заглушка, якщо SVG не може бути завантажено -->
+                    <p class="text-center text-gray-500 p-10">Could not load chart. Ensure 'python_repos.svg' exists.</p>
+                </object>
             </div>
         </main>
 
@@ -60,48 +64,16 @@
         </footer>
     </div>
 
-    <!-- 1. НОВИЙ РЯДОК: Підключаємо Pygal JS тут, після основного вмісту, для кращої сумісності -->
+    <!-- 1. ПІДКЛЮЧАЄМО Pygal JS -->
     <script src="https://cdn.jsdelivr.net/npm/pygal-js@2.4.0/dist/pygal.min.js"></script>
+    
+    <!-- 2. НОВИЙ СКРИПТ: Автоматично ініціалізує Pygal для SVG, вбудованого через <object> -->
+    <script src="https://cdn.jsdelivr.net/npm/pygal-js@2.4.0/dist/ready-to-use-script.js"></script>
 
     <script>
-        // Функція для завантаження та вбудовування SVG-файлу
-        async function loadSVG() {
-            const container = document.getElementById('chart-container');
-            
-            try {
-                // Використовуємо fetch для отримання SVG-коду
-                const response = await fetch('python_repos.svg');
-                
-                if (!response.ok) {
-                    // Якщо файл не знайдено, показуємо заглушку
-                    throw new Error(`Failed to fetch SVG: ${response.statusText}`);
-                }
-                
-                const svgText = await response.text();
-                
-                // Вбудовуємо SVG-код безпосередньо в контейнер
-                container.innerHTML = svgText;
-
-                // 2. НОВИЙ РЯДОК: Після вбудовування SVG, викликаємо Pygal.
-                // Цей виклик сканує DOM і додає підказки до вбудованого SVG.
-                if (typeof Pygal === 'object' && Pygal.init) {
-                    Pygal.init(document.getElementsByTagName('svg')[0]);
-                }
-
-            } catch (error) {
-                console.error("Error loading SVG for chart embedding:", error);
-                container.innerHTML = `
-                    <div class="text-center p-10 border border-red-300 bg-red-50 rounded-lg">
-                        <p class="text-red-600 font-semibold">Error loading chart data.</p>
-                        <p class="text-sm text-red-500">Ensure the 'python_repos.svg' file exists and the GitHub Action ran successfully.</p>
-                    </div>
-                `;
-            }
-        }
-
-        // Запускаємо функцію після завантаження сторінки
-        loadSVG();
+        // Видалено функцію loadSVG(), оскільки ми використовуємо <object> та ready-to-use-script.js
     </script>
 </body>
 </html>
+
 
