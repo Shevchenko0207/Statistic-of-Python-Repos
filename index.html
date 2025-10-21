@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Python Repositories Statistics</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- НОВИЙ РЯДОК: Підключення JavaScript Pygal для інтерактивних підказок (тултіпів) -->
+    <script src="https://cdn.jsdelivr.net/npm/pygal-js@2.4.0/dist/pygal.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         body {
@@ -30,6 +32,12 @@
             pointer-events: none;
             position: absolute;
             z-index: 1000;
+        }
+        /* Стиль для SVG, щоб забезпечити адаптивність */
+        #chart-container svg {
+            display: block;
+            width: 100%;
+            height: auto;
         }
     </style>
 </head>
@@ -88,3 +96,4 @@
     </script>
 </body>
 </html>
+
