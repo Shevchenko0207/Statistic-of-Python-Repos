@@ -1,10 +1,38 @@
+import os # Додано для доступу до змінних середовища
 import requests
 import pygal
 from pygal.style import LightColorizedStyle as LCS, LightenStyle as LS
 
+# 1. Отримання GITHUB_TOKEN зі змінних середовища
+token = os.environ.get("GITHUB_TOKEN")
+headers = {}
+if token:
+    headers["Authorization"] = f"token {token}"
+    print("Using GITHUB_TOKEN for API request.")
+else:
+    print("GITHUB_TOKEN not found. Using anonymous request (low rate limit).")
+
+# URL запиту залишається незмінним
 url = "https://api.github.com/search/repositories?q=language:python&sort=stars"
-r = requests.get(url)
+
+# 2. Виконання запиту з автентифікацією
+# Передача заголовків (headers) у запит
+r = requests.get(url, headers=headers)
 print("Status code:", r.status_code)
+
+# Якщо запит не вдався, вивести помилку та вийти
+if r.status_code != 200:
+    print(f"Error: API request failed with status code {r.status_code}.")
+    # Вивести текст помилки, якщо він є у відповіді
+    try:
+        error_dict = r.json()
+        print("API Error Response:", error_dict)
+    except requests.exceptions.JSONDecodeError:
+        print("API Error Response Text:", r.text)
+    
+    # Вихід із кодом 1, щоб позначити невдачу в Actions
+    exit(1)
+
 
 response_dict = r.json()
 print("Total repositories:", response_dict["total_count"])
@@ -19,7 +47,8 @@ for repo_dict in repo_dicts:
 
     plot_dict = {
         "value": repo_dict["stargazers_count"],
-        "label": repo_dict["description"],
+        # Додано перевірку, щоб уникнути помилок, якщо опис відсутній
+        "label": repo_dict["description"] or "No description provided", 
         "xlink": repo_dict["html_url"],
     }
     plot_dicts.append(plot_dict)
@@ -40,3 +69,4 @@ chart.title = "Most-Starred Python Projects on GitHub"
 chart.x_labels = names
 chart.add("", plot_dicts)
 chart.render_to_file("python_repos.svg")
+
