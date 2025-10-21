@@ -53,7 +53,7 @@ for repo_dict in repo_dicts:
     }
     plot_dicts.append(plot_dict)
 
-my_style = LS("#333399", base_style=LCS)
+my_style = LS("#333366", base_style=LCS)
 my_config = pygal.Config()
 my_config.x_label_rotation = 45
 my_config.show_legend = False
