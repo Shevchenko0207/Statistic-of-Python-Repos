@@ -67,7 +67,7 @@ my_config.width = 1000
 my_config.show_minor_labels = False 
 
 chart = pygal.Bar(my_config, style=my_style)
-chart.title = "Most-Starred Python Projects on GitHub"
+#chart.title = "Most-Starred Python Projects on GitHub"
 chart.x_labels = names
 chart.add("", plot_dicts)
 chart.render_to_file("python_repos.svg")
