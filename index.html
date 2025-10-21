@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Python Repositories Statistics</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- НОВИЙ РЯДОК: Підключення JavaScript Pygal для інтерактивних підказок (тултіпів) -->
-    <script src="https://cdn.jsdelivr.net/npm/pygal-js@2.4.0/dist/pygal.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         body {
@@ -22,7 +20,13 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             padding: 20px;
         }
-        /* Стиль для Pygal підказок, якщо вони потрібні */
+        /* Стиль для SVG, щоб забезпечити адаптивність */
+        #chart-container svg {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+        /* Стилі Pygal залишаємо для коректного відображення */
         .pygal-tooltip {
             background-color: #333;
             color: #fff;
@@ -32,12 +36,6 @@
             pointer-events: none;
             position: absolute;
             z-index: 1000;
-        }
-        /* Стиль для SVG, щоб забезпечити адаптивність */
-        #chart-container svg {
-            display: block;
-            width: 100%;
-            height: auto;
         }
     </style>
 </head>
@@ -62,6 +60,9 @@
         </footer>
     </div>
 
+    <!-- 1. НОВИЙ РЯДОК: Підключаємо Pygal JS тут, після основного вмісту, для кращої сумісності -->
+    <script src="https://cdn.jsdelivr.net/npm/pygal-js@2.4.0/dist/pygal.min.js"></script>
+
     <script>
         // Функція для завантаження та вбудовування SVG-файлу
         async function loadSVG() {
@@ -72,6 +73,7 @@
                 const response = await fetch('python_repos.svg');
                 
                 if (!response.ok) {
+                    // Якщо файл не знайдено, показуємо заглушку
                     throw new Error(`Failed to fetch SVG: ${response.statusText}`);
                 }
                 
@@ -79,6 +81,12 @@
                 
                 // Вбудовуємо SVG-код безпосередньо в контейнер
                 container.innerHTML = svgText;
+
+                // 2. НОВИЙ РЯДОК: Після вбудовування SVG, викликаємо Pygal.
+                // Цей виклик сканує DOM і додає підказки до вбудованого SVG.
+                if (typeof Pygal === 'object' && Pygal.init) {
+                    Pygal.init(document.getElementsByTagName('svg')[0]);
+                }
 
             } catch (error) {
                 console.error("Error loading SVG for chart embedding:", error);
