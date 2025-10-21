@@ -25,9 +25,10 @@ submission_dict = {
 submission_dicts.append(submission_dict)
 
 submission_dicts = sorted(submission_dicts, key=itemgetter('comments'),
-        reverse=True)
+            reverse=True)
 
 for submission_dict in submission_dicts:
     print("\nTitle:", submission_dict['title'])
     print("Discussion link:", submission_dict['link'])
     print("Comments:", submission_dict['comments'])
+
